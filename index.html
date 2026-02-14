@@ -1,87 +1,238 @@
-<script>
-    // UPDATED DATE: February 22, 2026
-    const meetupDate = new Date("February 22, 2026 00:00:00").getTime();
-    let noCount = 0;
-
-    function createFlair() {
-        const icon = document.createElement('i');
-        icon.className = `fa-solid fa-heart flair-icon`;
-        icon.style.left = Math.random() * 100 + 'vw';
-        icon.style.fontSize = (Math.random() * 15 + 10) + 'px';
-        icon.style.animationDuration = (Math.random() * 6 + 4) + 's';
-        document.getElementById('flair-container').appendChild(icon);
-        setTimeout(() => icon.remove(), 10000);
-    }
-    setInterval(createFlair, 500);
-
-    function triggerTransition(callback) {
-        const heart = document.getElementById('heart-transition');
-        heart.classList.add('active-transition');
-        setTimeout(() => {
-            callback();
-            setTimeout(() => heart.classList.remove('active-transition'), 300);
-        }, 1000);
-    }
-
-    function handleLogin() {
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
-        const card = document.querySelector('.card');
-
-        // Verification Check
-        if(user === "Mansi Patel" && pass === "oct112023") {
-            triggerTransition(() => {
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('question-view').classList.remove('hidden');
-                document.getElementById('proposal-text').innerHTML = `${user},<br>love of my life...<br>will you be my Valentine?`;
-            });
-        } else {
-            card.style.animation = 'shake 0.4s';
-            setTimeout(() => card.style.animation = '', 400);
-            alert("Credentials incorrect. Please try again, love.");
-        }
-    }
-
-    function handleNo() {
-        noCount++;
-        const noBtn = document.getElementById('no-btn');
-        const yesBtn = document.getElementById('yes-btn');
-        const card = document.querySelector('.card');
-
-        if(noCount === 1) {
-            card.style.animation = 'shake 0.4s';
-            setTimeout(() => card.style.animation = '', 400);
-            noBtn.innerText = "Error...";
-        } else {
-            noBtn.style.display = 'none';
-            yesBtn.classList.add('huge-yes');
-            yesBtn.innerText = "YES!";
-        }
-    }
-
-    function celebrate() {
-        triggerTransition(() => {
-            document.getElementById('question-view').classList.add('hidden');
-            document.getElementById('countdown-view').classList.remove('hidden');
-            updateTimer(); // Run once immediately
-            setInterval(updateTimer, 1000);
-        });
-    }
-
-    function updateTimer() {
-        const now = new Date().getTime();
-        const d = meetupDate - now;
-
-        if (d < 0) {
-            document.getElementById('timer').innerHTML = "The day is here! ❤️";
-            return;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Valentine</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --hot-pink: #ff4d6d;
+            --soft-pink: #ffb3c1;
+            --deep-red: #c9184a;
+            --black: #1a1a1a;
+            --white: #ffffff;
         }
 
-        const days = Math.floor(d / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((d % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((d % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((d % (1000 * 60)) / 1000);
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--white);
+            background: url('image.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-color: var(--black);
+        }
+
+        #flair-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .flair-icon {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.3);
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg) scale(0.8); opacity: 0; }
+            15% { opacity: 0.5; }
+            85% { opacity: 0.5; }
+            100% { transform: translateY(-20vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        #heart-transition {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 150px; height: 150px;
+            background: var(--deep-red);
+            clip-path: url(#heartPath);
+            z-index: 10000;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .active-transition { transform: translate(-50%, -50%) scale(55) !important; }
+
+        #app-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 3rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            width: 85%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 { font-family: 'Dancing Script', cursive; color: var(--white); font-size: 3rem; margin-bottom: 0.5rem; }
         
-        document.getElementById('timer').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-</script>
+        input { 
+            width: 85%; padding: 14px; margin: 12px 0; border-radius: 12px; 
+            border: none; background: rgba(255, 255, 255, 0.9); color: var(--black);
+            outline: none; font-size: 1rem;
+        }
+
+        button {
+            padding: 15px 35px; border: none; border-radius: 50px;
+            cursor: pointer; font-weight: 700; margin: 10px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .btn-primary { background: var(--deep-red); color: white; }
+        .btn-secondary { background: var(--white); color: var(--deep-red); }
+
+        .huge-yes {
+            position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important;
+            font-size: 7rem !important; z-index: 9999 !important; border-radius: 0 !important; margin: 0 !important;
+        }
+
+        .hidden { display: none; }
+        #timer { font-size: 2.5rem; color: var(--white); margin-top: 25px; font-weight: 800; }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="flair-container"></div>
+
+    <svg width="0" height="0">
+        <defs>
+            <clipPath id="heartPath" clipPathUnits="objectBoundingBox">
+                <path d="M0.5,0.88 L0.12,0.52 C0.04,0.44,0,0.34,0,0.24 C0,0.11,0.11,0,0.24,0 C0.34,0,0.44,0.05,0.5,0.13 C0.56,0.05,0.66,0,0.76,0 C0.89,0,1,0.11,1,0.24 C1,0.34,0.96,0.44,0.88,0.52 L0.5,0.88"></path>
+            </clipPath>
+        </defs>
+    </svg>
+
+    <div id="heart-transition"></div>
+
+    <div id="app-container">
+        <div id="login-view" class="card">
+            <h1>Identity Check</h1>
+            <input type="text" id="username" placeholder="Full Name">
+            <input type="password" id="password" placeholder="Password">
+            <br>
+            <button class="btn-primary" onclick="handleLogin()">Unlock Message</button>
+        </div>
+
+        <div id="question-view" class="card hidden">
+            <h1 id="proposal-text">Will you be my Valentine?</h1>
+            <div id="btn-group">
+                <button id="yes-btn" class="btn-primary" onclick="celebrate()">YES</button>
+                <button id="no-btn" class="btn-secondary" onclick="handleNo()">No</button>
+            </div>
+        </div>
+
+        <div id="countdown-view" class="card hidden">
+            <h1>Counting the days...</h1>
+            <div id="timer">00:00:00:00</div>
+        </div>
+    </div>
+
+    <script>
+        const meetupDate = new Date("February 22, 2026 14:00:00").getTime();
+        let noCount = 0;
+
+        function createFlair() {
+            const icon = document.createElement('i');
+            icon.className = `fa-solid fa-heart flair-icon`;
+            icon.style.left = Math.random() * 100 + 'vw';
+            icon.style.fontSize = (Math.random() * 15 + 10) + 'px';
+            icon.style.animationDuration = (Math.random() * 6 + 4) + 's';
+            document.getElementById('flair-container').appendChild(icon);
+            setTimeout(() => icon.remove(), 10000);
+        }
+        setInterval(createFlair, 500);
+
+        function triggerTransition(callback) {
+            const heart = document.getElementById('heart-transition');
+            heart.classList.add('active-transition');
+            setTimeout(() => {
+                callback();
+                setTimeout(() => heart.classList.remove('active-transition'), 300);
+            }, 1000);
+        }
+
+        function handleLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const card = document.querySelector('.card');
+
+            // Verification Check
+            if(user === "Mansi Patel" && pass === "oct112023") {
+                triggerTransition(() => {
+                    document.getElementById('login-view').classList.add('hidden');
+                    document.getElementById('question-view').classList.remove('hidden');
+                    document.getElementById('proposal-text').innerHTML = `${user},<br>love of my life...<br>will you be my Valentine?`;
+                });
+            } else {
+                // Incorrect Credentials Effect
+                card.style.animation = 'shake 0.4s';
+                setTimeout(() => card.style.animation = '', 400);
+                alert("Credentials incorrect. Please try again, love.");
+            }
+        }
+
+        function handleNo() {
+            noCount++;
+            const noBtn = document.getElementById('no-btn');
+            const yesBtn = document.getElementById('yes-btn');
+            const card = document.querySelector('.card');
+
+            if(noCount === 1) {
+                card.style.animation = 'shake 0.4s';
+                setTimeout(() => card.style.animation = '', 400);
+                noBtn.innerText = "Error...";
+            } else {
+                noBtn.style.display = 'none';
+                yesBtn.classList.add('huge-yes');
+                yesBtn.innerText = "YES!";
+            }
+        }
+
+        function celebrate() {
+            triggerTransition(() => {
+                document.getElementById('question-view').classList.add('hidden');
+                document.getElementById('countdown-view').classList.remove('hidden');
+                setInterval(updateTimer, 1000);
+            });
+        }
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const d = meetupDate - now;
+            const days = Math.floor(d / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((d % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((d % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((d % (1000 * 60)) / 1000);
+            document.getElementById('timer').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+    </script>
+</body>
+</html>
